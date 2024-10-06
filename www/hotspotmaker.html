@@ -1,0 +1,140 @@
+
+        <!DOCTYPE html>
+		<html lang="en">
+			<head>
+				<title>Add New Hotspot</title>
+				<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+				<meta charset="utf-8">
+				<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width, shrink-to-fit=no">
+		
+				<!--<link rel="stylesheet" type="text/css" href="style.css">-->
+				<link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+
+
+		
+				<script src="jquery.js"></script>
+				<script src="three.min.js"></script>
+				<script src="panolens.js"></script>
+				<script src="imagedata.js"></script>
+		
+		
+		
+		
+				<style>
+					html, body {
+						margin: 0;
+						width: 100%;
+						height: 100%;
+						overflow: hidden;
+						background-color: #000;
+						cursor: crosshair;
+					}
+
+					a:link, a:visited{
+						color: #bdc3c7;	
+					}
+
+					.fullwrapper{
+						position: fixed;
+						top: 0;
+						left: 0;
+						right: 0;
+						bottom: 0;
+						background-color: black;
+					}
+			
+					#container {
+						width: 100%;
+						height: 100%;
+					}
+			
+				</style>
+			</head>
+			<body id="body">
+				<div id="container"></div>
+				<div id="infospotloc" style="display: none;"></div>
+    			<div id="loading" class="fullwrapper" style="display: table; width: 100%; height: 100%;">
+    				<div style="display: table-cell; vertical-align: middle; text-align: center; color: white; font-size: 30px;">
+    					<!--loadingtext--><p>Please Wait...</p><!--loadingtext-end-->
+    				</div>
+    			</div>
+
+				<div style='position: fixed; left: 0; bottom: 0; right: 0; padding: 10px; background-color: rgba(0,0,0,.5); color: white; text-align: center; font-size: 0.5em;'>Tap anywhere to bring the hotspot, and tap on the hotspot to confirm its position.</div>
+		
+				<div id="target" style="position: fixed; top: 0; left: 0; color: white; width: 32px; height: 32px; text-align: center;"><img id='crosshair' src="crosshair.png" style="width: 100%; display: none; height: 100%;"></div>
+		
+		
+    			<script>
+			
+					var container = document.querySelector( '#container' );
+					var viewer = new PANOLENS.Viewer( { 
+						container: container ,
+						controlBar: false,  
+						output: 'console' ,
+						autoHideInfospot: false,
+					} );
+			
+					viewer.addUpdateCallback(function(){});
+    
+			var currenthotspot = new PANOLENS.ImagePanorama( "panoramas/IMG-20241005-WA0041.jpg" );
+			viewer.add( currenthotspot );
+			currenthotspot.addEventListener('progress', function(e){
+			$("#loading").show();
+			});
+			currenthotspot.addEventListener('load', function(e){
+			$("#loading").fadeOut();
+			});
+			currenthotspot.addEventListener('click', function(e){
+				//console.log("Ctrl Pressed");
+				hpos = $("#infospotloc").html();
+				console.log("Hpos value: " + hpos);
+					
+				testinfospot.position.set( hpos.split(',')[0], hpos.split(',')[1], hpos.split(',')[2] );
+			});
+
+			var testinfospot = new PANOLENS.Infospot( 512, hotspotIcons[0].data, true );
+			testinfospot.position.set( 3677.20, 123.94, -3377.30 );
+			currenthotspot.add(testinfospot);
+			testinfospot.addEventListener('click', function(){
+				if(hpos != ""){
+					initHotspotDialog();
+				}
+			});
+
+		
+				setTimeout(function(){
+					$("#target").css({
+						top: (innerHeight/2) - 16,
+						left: (innerWidth/2) - 16,
+					});
+					//$('#crosshair').fadeIn();
+				}, 2000);
+				
+				var hpos;
+				$("#target").on("click", function(e){
+				
+					
+					//console.log("Ctrl Pressed");
+					hpos = $("#infospotloc").html();
+					console.log("Hpos value: " + hpos);
+					
+					testinfospot.position.set( hpos.split(',')[0], hpos.split(',')[1], hpos.split(',')[2] );
+				
+				});
+			
+		
+			
+				function initHotspotDialog(){
+					location.href = "three://action?hpos=" + hpos.replace(' ', '');
+					//alert(hpos);
+				
+				}
+			
+			
+			
+				$("#dim").fadeOut();
+			
+			</script>
+		</body>
+	</html>
+	
